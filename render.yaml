@@ -1,13 +1,10 @@
-databases:
-  - name: biblioteca-pimentas-vii-db
-    databaseName: biblioteca_pimentas_vii
-    user: biblioteca_pimentas_vii
-
 services:
   - type: web
     name: biblioteca-pimentas-vii
-    runtime: docker
-    plan: starter
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start:render
     healthCheckPath: /api/health
     autoDeploy: true
     envVars:
@@ -16,13 +13,11 @@ services:
       - key: PORT
         value: 10000
       - key: DATABASE_URL
-        fromDatabase:
-          name: biblioteca-pimentas-vii-db
-          property: connectionString
+        sync: false
       - key: DATABASE_SSL
         value: true
       - key: DATABASE_POOL_MAX
-        value: 30
+        value: 20
       - key: TRUST_PROXY
         value: true
       - key: PUBLIC_CACHE_TTL_SECONDS
@@ -35,6 +30,12 @@ services:
         generateValue: true
       - key: APP_PUBLIC_URL
         sync: false
+      - key: PASSWORD_RESET_PREVIEW_ENABLED
+        value: false
+      - key: ALLOW_IN_MEMORY_DATABASE
+        value: false
+      - key: SEED_DEMO_DATA
+        value: false
       - key: MAIL_FROM
         sync: false
       - key: SMTP_HOST
