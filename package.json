@@ -16,7 +16,7 @@
     "prebuild": "node -e \"const fs=require('node:fs'); fs.rmSync('dist', { recursive: true, force: true }); fs.rmSync('dist-server', { recursive: true, force: true });\"",
     "typecheck": "tsc -b && tsc -p tsconfig.server.json --noEmit",
     "build:client": "tsc -b && vite build",
-    "build:server": "tsup server/index.ts --format esm --platform node --out-dir dist-server --clean --sourcemap",
+    "build:server": "tsup server/index.ts --format esm --platform node --out-dir dist-server --clean",
     "build": "npm run build:server && npm run build:client",
     "build:dev": "tsc -b && vite build --mode development",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives",
