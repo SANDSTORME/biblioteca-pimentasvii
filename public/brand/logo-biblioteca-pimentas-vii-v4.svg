@@ -1,0 +1,52 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg4" x1="64" y1="60" x2="448" y2="452" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0E1C1A" />
+      <stop offset="0.55" stop-color="#142A26" />
+      <stop offset="1" stop-color="#1D312A" />
+    </linearGradient>
+    <linearGradient id="gold4" x1="154" y1="120" x2="360" y2="382" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F5DA89" />
+      <stop offset="0.5" stop-color="#D9AA47" />
+      <stop offset="1" stop-color="#A97328" />
+    </linearGradient>
+    <linearGradient id="bookDark4" x1="180" y1="158" x2="320" y2="326" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#17312D" />
+      <stop offset="1" stop-color="#0E201D" />
+    </linearGradient>
+    <filter id="shadow4" x="98" y="114" width="316" height="290" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#081110" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+
+  <rect x="28" y="28" width="456" height="456" rx="132" fill="url(#bg4)"/>
+  <rect x="42" y="42" width="428" height="428" rx="118" stroke="#E4BB63" stroke-opacity="0.18" stroke-width="2"/>
+
+  <circle cx="256" cy="256" r="152" fill="#10211F"/>
+  <circle cx="256" cy="256" r="151" stroke="#D9AA47" stroke-opacity="0.22" stroke-width="2"/>
+  <circle cx="256" cy="256" r="124" fill="none" stroke="#D9AA47" stroke-opacity="0.16" stroke-width="2" stroke-dasharray="6 10"/>
+
+  <g filter="url(#shadow4)">
+    <path d="M168 170C168 156.745 178.745 146 192 146H234C251.766 146 268.804 153.058 281.368 165.632C293.942 178.196 301 195.234 301 213V332.5C290.83 322.536 277.158 317 263 317C248.842 317 235.17 322.536 225 332.5V213C225 195.234 217.942 178.196 205.368 165.632C192.804 153.058 175.766 146 158 146H168V170Z" fill="url(#bookDark4)"/>
+    <path d="M344 170C344 156.745 333.255 146 320 146H278C260.234 146 243.196 153.058 230.632 165.632C218.058 178.196 211 195.234 211 213V332.5C221.17 322.536 234.842 317 249 317C263.158 317 276.83 322.536 287 332.5V213C287 195.234 294.058 178.196 306.632 165.632C319.196 153.058 336.234 146 354 146H344V170Z" fill="url(#bookDark4)"/>
+
+    <path d="M256 176V332" stroke="#DDB45C" stroke-width="9" stroke-linecap="round"/>
+    <path d="M188 188H224" stroke="#D4B569" stroke-width="6" stroke-linecap="round"/>
+    <path d="M188 212H224" stroke="#D4B569" stroke-width="6" stroke-linecap="round"/>
+    <path d="M188 236H218" stroke="#D4B569" stroke-width="6" stroke-linecap="round"/>
+    <path d="M288 188H324" stroke="#D4B569" stroke-width="6" stroke-linecap="round"/>
+    <path d="M288 212H324" stroke="#D4B569" stroke-width="6" stroke-linecap="round"/>
+    <path d="M294 236H324" stroke="#D4B569" stroke-width="6" stroke-linecap="round"/>
+
+    <path d="M167 146H192C209.507 146 226.298 152.955 238.682 165.329C251.055 177.702 258.01 194.493 258.01 212V305.814C248.65 299.442 237.586 296.03 226.267 296.03C214.947 296.03 203.883 299.442 194.523 305.814V146.99C194.523 146.443 194.08 146 193.533 146H167Z" stroke="#DDB45C" stroke-width="7" stroke-linejoin="round"/>
+    <path d="M345 146H320C302.493 146 285.702 152.955 273.318 165.329C260.945 177.702 253.99 194.493 253.99 212V305.814C263.35 299.442 274.414 296.03 285.733 296.03C297.053 296.03 308.117 299.442 317.477 305.814V146.99C317.477 146.443 317.92 146 318.467 146H345Z" stroke="#DDB45C" stroke-width="7" stroke-linejoin="round"/>
+
+    <path d="M173 348C197.148 324.82 225.073 313.23 256 313.23C286.927 313.23 314.852 324.82 339 348" stroke="url(#gold4)" stroke-width="18" stroke-linecap="round"/>
+  </g>
+
+  <g>
+    <path d="M256 106L262.124 120.876L277 127L262.124 133.124L256 148L249.876 133.124L235 127L249.876 120.876L256 106Z" fill="#F5DA89"/>
+    <circle cx="224" cy="122" r="5" fill="#F5DA89"/>
+    <circle cx="288" cy="122" r="5" fill="#F5DA89"/>
+  </g>
+</svg>
