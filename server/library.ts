@@ -39,7 +39,6 @@ import {
   readPermissionByKey,
   readPermissionsByStudent,
   readReviews,
-  readSuggestions,
   readSuggestionsByProfessor,
   readTeacherTokenById,
   readTicketsByUser,
@@ -304,10 +303,8 @@ export const getLibrarySnapshotForUser = async (actor: User | null | undefined):
   const serializedReviews = reviews.map(serializeReview);
 
   if (!actor) {
-    const [users, loans, suggestions, favorites, notices, documents] = await Promise.all([
-      readActiveUsers(),
+    const [loans, favorites, notices, documents] = await Promise.all([
       readLoans(),
-      readSuggestions(),
       readFavorites(),
       readVisibleNotices(null),
       readVisibleDocuments(null),
@@ -315,9 +312,9 @@ export const getLibrarySnapshotForUser = async (actor: User | null | undefined):
 
     return {
       books: serializedBooks,
-      users: users.map(serializeUser),
+      users: [],
       loans: anonymizeLoans(loans.map(serializeLoan)),
-      suggestions: suggestions.map(serializeSuggestion),
+      suggestions: [],
       tickets: [],
       teacherTokens: [],
       permissions: [],

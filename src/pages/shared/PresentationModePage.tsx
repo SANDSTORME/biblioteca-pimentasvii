@@ -4,29 +4,28 @@ import { Link, useNavigate } from 'react-router-dom';
 import BrandLogo from '@/components/shared/BrandLogo';
 import ThemeToggle from '@/components/shared/ThemeToggle';
 import { useAuth } from '@/contexts/AuthContext';
-import { useLibrary } from '@/contexts/LibraryContext';
-import { getBookReviewAverage, noticeAudienceLabel, noticeCategoryLabel } from '@/lib/community';
+import usePublicSiteData from '@/hooks/usePublicSiteData';
+import { noticeAudienceLabel, noticeCategoryLabel } from '@/lib/community';
 
-// Tela pensada para apresentação pública da biblioteca em reunião, laboratório ou telão.
 const PresentationModePage: React.FC = () => {
   const { user } = useAuth();
-  const { books, favorites, loans, notices, reviews, suggestions, users } = useLibrary();
+  const { data: publicData } = usePublicSiteData();
   const navigate = useNavigate();
 
-  const activeNotices = notices.filter((notice) => notice.ativo);
-  const highlightedNotices = activeNotices.filter((notice) => notice.destaque);
-  const completedLoans = loans.filter((loan) => loan.status === 'devolvido').length;
-  const activeLoans = loans.filter((loan) => loan.status === 'aprovado').length;
-  const pendingLoans = loans.filter((loan) => loan.status === 'pendente').length;
-  const topBooks = [...books]
-    .sort((left, right) => {
-      const leftReviews = reviews.filter((review) => review.livroId === left.id);
-      const rightReviews = reviews.filter((review) => review.livroId === right.id);
-      const leftScore = getBookReviewAverage(leftReviews) * 10 + left.classificacao + left.quantidadeDisponivel;
-      const rightScore = getBookReviewAverage(rightReviews) * 10 + right.classificacao + right.quantidadeDisponivel;
-      return rightScore - leftScore;
-    })
-    .slice(0, 3);
+  const activeNotices = publicData.activeNotices;
+  const noticesToShow = (publicData.highlightedNotices.length > 0
+    ? publicData.highlightedNotices
+    : activeNotices.slice(0, 3));
+  const topBooks = publicData.topBooks.slice(0, 3);
+  const hasPresentationData =
+    publicData.overview.totalBooks > 0 ||
+    publicData.overview.totalUsers > 0 ||
+    publicData.totalReviews > 0 ||
+    publicData.totalFavorites > 0 ||
+    publicData.overview.suggestionsCount > 0 ||
+    publicData.completedLoans > 0 ||
+    publicData.pendingLoans > 0 ||
+    activeNotices.length > 0;
 
   return (
     <div className="min-h-screen bg-background px-4 py-5 sm:px-6 lg:px-8">
@@ -59,14 +58,21 @@ const PresentationModePage: React.FC = () => {
                 Esta visão foi pensada para mostrar, em poucos blocos, como o sistema apoia a leitura, a organização do
                 acervo e a comunicação da escola com alunos e professores.
               </p>
+
+              {!hasPresentationData && (
+                <div className="mt-5 rounded-[1.3rem] border border-dashed border-border/70 bg-card/45 px-4 py-3 text-sm leading-7 text-muted-foreground">
+                  O ambiente publicado já está pronto para demonstração estrutural. Assim que a escola cadastrar livros,
+                  avisos e documentos, esta vitrine passa a refletir dados reais da biblioteca.
+                </div>
+              )}
             </div>
 
             <div className="grid gap-4 min-[480px]:grid-cols-2">
               {[
-                { icon: BookOpen, label: 'Títulos no acervo', value: books.length },
-                { icon: BookMarked, label: 'Empréstimos ativos', value: activeLoans },
-                { icon: MessageSquareQuote, label: 'Resenhas publicadas', value: reviews.length },
-                { icon: Heart, label: 'Favoritos salvos', value: favorites.length },
+                { icon: BookOpen, label: 'Títulos no acervo', value: publicData.overview.totalBooks },
+                { icon: BookMarked, label: 'Empréstimos ativos', value: publicData.overview.activeLoans },
+                { icon: MessageSquareQuote, label: 'Resenhas publicadas', value: publicData.totalReviews },
+                { icon: Heart, label: 'Favoritos salvos', value: publicData.totalFavorites },
               ].map((item) => (
                 <div key={item.label} className="glass-panel rounded-[1.4rem] p-5 shadow-card">
                   <div className="flex items-center justify-between gap-3">
@@ -97,7 +103,7 @@ const PresentationModePage: React.FC = () => {
             </div>
 
             <div className="space-y-3">
-              {(highlightedNotices.length > 0 ? highlightedNotices : activeNotices.slice(0, 3)).map((notice) => (
+              {noticesToShow.map((notice) => (
                 <div key={notice.id} className="rounded-[1.35rem] border border-border/70 bg-card/70 p-4">
                   <div className="flex flex-wrap gap-2">
                     <span className="rounded-full border border-border/70 bg-background/70 px-2.5 py-1 text-[11px] text-muted-foreground">
@@ -133,9 +139,9 @@ const PresentationModePage: React.FC = () => {
 
             <div className="grid gap-4 sm:grid-cols-3">
               {[
-                { label: 'Concluídos', value: completedLoans, tone: 'text-primary' },
-                { label: 'Em análise', value: pendingLoans, tone: 'text-warm-gold' },
-                { label: 'Sugestões docentes', value: suggestions.length, tone: 'text-sky-400' },
+                { label: 'Concluídos', value: publicData.completedLoans, tone: 'text-primary' },
+                { label: 'Em análise', value: publicData.pendingLoans, tone: 'text-warm-gold' },
+                { label: 'Sugestões docentes', value: publicData.overview.suggestionsCount, tone: 'text-sky-400' },
               ].map((metric) => (
                 <div key={metric.label} className="rounded-[1.35rem] border border-border/70 bg-card/70 p-4">
                   <p className="text-xs uppercase tracking-[0.22em] text-muted-foreground">{metric.label}</p>
@@ -147,9 +153,9 @@ const PresentationModePage: React.FC = () => {
             <div className="mt-5 rounded-[1.35rem] border border-border/70 bg-card/70 p-4">
               <p className="text-sm font-semibold text-foreground">Alcance do sistema</p>
               <p className="mt-2 text-sm leading-7 text-muted-foreground">
-                Hoje a plataforma reúne {users.filter((entry) => entry.role === 'aluno' && entry.ativo).length} aluno(s),
-                {` ${users.filter((entry) => entry.role === 'professor' && entry.ativo).length} professor(es) `}
-                e uma administração capaz de acompanhar empréstimos, recomendações e suporte em um único ambiente.
+                {publicData.overview.totalUsers > 0
+                  ? `Hoje a plataforma reúne ${publicData.studentsCount} aluno(s), ${publicData.teachersCount} professor(es) e uma administração capaz de acompanhar empréstimos, recomendações e suporte em um único ambiente.`
+                  : 'A publicação já está pronta para receber a comunidade escolar. Quando os cadastros e materiais entrarem, esta tela passa a refletir o alcance real do sistema.'}
               </p>
             </div>
           </div>
@@ -170,36 +176,38 @@ const PresentationModePage: React.FC = () => {
           </div>
 
           <div className="grid gap-4 lg:grid-cols-3">
-            {topBooks.map((book) => {
-              const bookReviews = reviews.filter((review) => review.livroId === book.id);
-              const average = getBookReviewAverage(bookReviews);
-
-              return (
-                <div key={book.id} className="rounded-[1.45rem] border border-border/70 bg-card/70 p-4">
-                  <img src={book.capa} alt={book.titulo} className="aspect-[4/3] w-full rounded-[1.2rem] object-cover shadow-card" />
-                  <p className="mt-4 font-display text-2xl text-foreground">{book.titulo}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">{book.autor}</p>
-                  <div className="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
-                    <span className="rounded-full border border-border/70 bg-background/70 px-2.5 py-1">{book.categoria}</span>
+            {topBooks.map((book) => (
+              <div key={book.id} className="rounded-[1.45rem] border border-border/70 bg-card/70 p-4">
+                <img src={book.capa} alt={book.titulo} className="aspect-[4/3] w-full rounded-[1.2rem] object-cover shadow-card" />
+                <p className="mt-4 font-display text-2xl text-foreground">{book.titulo}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{book.autor}</p>
+                <div className="mt-3 flex flex-wrap gap-2 text-xs text-muted-foreground">
+                  <span className="rounded-full border border-border/70 bg-background/70 px-2.5 py-1">{book.categoria}</span>
+                  <span className="rounded-full border border-border/70 bg-background/70 px-2.5 py-1">
+                    {book.quantidadeDisponivel} disponível(is)
+                  </span>
+                  {book.reviewCount > 0 && (
                     <span className="rounded-full border border-border/70 bg-background/70 px-2.5 py-1">
-                      {book.quantidadeDisponivel} disponível(is)
+                      {book.averageReview.toFixed(1)}/5 nas resenhas
                     </span>
-                    {bookReviews.length > 0 && (
-                      <span className="rounded-full border border-border/70 bg-background/70 px-2.5 py-1">
-                        {average.toFixed(1)}/5 nas resenhas
-                      </span>
-                    )}
-                  </div>
-                  <p className="mt-3 text-sm leading-7 text-muted-foreground">{book.descricao}</p>
+                  )}
                 </div>
-              );
-            })}
+                <p className="mt-3 text-sm leading-7 text-muted-foreground">{book.descricao}</p>
+              </div>
+            ))}
+
+            {topBooks.length === 0 && (
+              <div className="lg:col-span-3 rounded-[1.45rem] border border-dashed border-border/70 bg-card/45 p-5 text-sm leading-7 text-muted-foreground">
+                Os destaques do acervo aparecerão aqui quando os primeiros livros e resenhas forem cadastrados. A estrutura
+                da apresentação já está pronta para receber dados reais da biblioteca.
+              </div>
+            )}
           </div>
         </div>
 
         <div className="rounded-[1.5rem] border border-border/70 bg-card/50 px-5 py-4 text-sm leading-7 text-muted-foreground">
-          Biblioteca Pimentas VII em modo apresentação: leitura, empréstimos, suporte e comunicação institucional em um
-          só panorama.
+          Biblioteca Pimentas VII em modo apresentação: leitura, empréstimos, suporte e comunicação institucional em um só
+          panorama.
         </div>
       </div>
     </div>

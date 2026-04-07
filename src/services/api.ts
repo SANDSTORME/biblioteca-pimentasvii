@@ -41,6 +41,24 @@ export interface PublicOverview {
   featuredNotices: LibraryNotice[];
 }
 
+export interface PublicSiteBook extends Book {
+  averageReview: number;
+  reviewCount: number;
+}
+
+export interface PublicSiteData {
+  overview: PublicOverview;
+  pendingLoans: number;
+  completedLoans: number;
+  totalFavorites: number;
+  totalReviews: number;
+  studentsCount: number;
+  teachersCount: number;
+  activeNotices: LibraryNotice[];
+  highlightedNotices: LibraryNotice[];
+  topBooks: PublicSiteBook[];
+}
+
 export interface ApiActionResult {
   success: boolean;
   message: string;
@@ -168,6 +186,11 @@ export const getLibrarySnapshot = async () => {
 export const getPublicOverview = async () => {
   const response = await request<{ success: true; overview: PublicOverview }>('/public/overview');
   return response.overview;
+};
+
+export const getPublicSiteData = async () => {
+  const response = await request<{ success: true; data: PublicSiteData }>('/public/site-data');
+  return response.data;
 };
 
 export const getCurrentSession = async () => {

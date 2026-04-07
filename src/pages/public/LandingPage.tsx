@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLibrary } from '@/contexts/LibraryContext';
+import usePublicSiteData from '@/hooks/usePublicSiteData';
 import SchoolClassSelect from '@/components/shared/SchoolClassSelect';
 import BrandLogo from '@/components/shared/BrandLogo';
 import ThemeToggle from '@/components/shared/ThemeToggle';
@@ -43,7 +44,8 @@ const inputClassName =
 
 const LandingPage: React.FC = () => {
   const { login, register, user } = useAuth();
-  const { books, loans, notices, suggestions, users } = useLibrary();
+  const { books, loans, notices } = useLibrary();
+  const { data: publicData } = usePublicSiteData();
   const navigate = useNavigate();
 
   const [mode, setMode] = useState<AuthMode>('none');
@@ -302,13 +304,20 @@ const LandingPage: React.FC = () => {
                   <div className="mt-3 grid gap-3 min-[430px]:grid-cols-2">
                     <div className="glass-panel rounded-[1.3rem] p-4 sm:rounded-[1.4rem]">
                       <p className="text-[11px] uppercase tracking-[0.24em] text-muted-foreground">Usuários</p>
-                      <p className="mt-2 font-display text-3xl text-foreground">{users.length}</p>
+                      <p className="mt-2 font-display text-3xl text-foreground">{publicData.overview.totalUsers}</p>
                     </div>
                     <div className="glass-panel rounded-[1.3rem] p-4 sm:rounded-[1.4rem]">
                       <p className="text-[11px] uppercase tracking-[0.24em] text-muted-foreground">Sugestões</p>
-                      <p className="mt-2 font-display text-3xl text-foreground">{suggestions.length}</p>
+                      <p className="mt-2 font-display text-3xl text-foreground">{publicData.overview.suggestionsCount}</p>
                     </div>
                   </div>
+                  {publicData.overview.totalUsers === 0 &&
+                    publicData.overview.suggestionsCount === 0 &&
+                    publicData.overview.totalBooks === 0 && (
+                      <p className="mt-3 text-xs leading-6 text-muted-foreground">
+                        Ambiente publicado pronto para receber acervo, comunidade e recomendações reais da escola.
+                      </p>
+                    )}
                 </div>
               </div>
 
