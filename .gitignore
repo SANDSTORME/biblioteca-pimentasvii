@@ -14,7 +14,7 @@ dist-ssr
 *.local
 .env
 .env.*
-data/
+/data/
 
 # Playwright
 playwright-report/
