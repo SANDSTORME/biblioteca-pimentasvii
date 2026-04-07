@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import http from 'node:http';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -686,12 +687,13 @@ app.use((error: unknown, _request: Request, response: Response, _next: NextFunct
   response.status(500).json({ success: false, message: 'Erro interno do servidor.' });
 });
 
-if (isProduction) {
-  const currentFilePath = fileURLToPath(import.meta.url);
-  const currentDirectory = path.dirname(currentFilePath);
-  const appRoot = path.basename(currentDirectory) === 'dist-server' ? path.resolve(currentDirectory, '..') : process.cwd();
-  const distPath = path.resolve(appRoot, 'dist');
+const currentFilePath = fileURLToPath(import.meta.url);
+const currentDirectory = path.dirname(currentFilePath);
+const appRoot = path.basename(currentDirectory) === 'dist-server' ? path.resolve(currentDirectory, '..') : process.cwd();
+const distPath = path.resolve(appRoot, 'dist');
+const distIndexPath = path.join(distPath, 'index.html');
 
+if (existsSync(distIndexPath)) {
   app.use(
     express.static(distPath, {
       index: false,
@@ -720,7 +722,7 @@ if (isProduction) {
       return;
     }
 
-    response.sendFile(path.join(distPath, 'index.html'));
+    response.sendFile(distIndexPath);
   });
 }
 
